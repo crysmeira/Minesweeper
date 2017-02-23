@@ -1,0 +1,15 @@
+table {
+    background: pink;
+    border: 1px solid #ffffff;
+}
+
+td {
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    border: 1px solid #ffffff;
+}
+
+span {
+    display: none;
+}
