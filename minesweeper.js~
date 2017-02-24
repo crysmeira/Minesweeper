@@ -24,7 +24,7 @@ function startGame() {
     initializeListener();
     distributeMines();
     placeMines();
-    //placeMinesOnTable();
+    placeMinesOnTable();
 }
 
 function initializeTable() {
@@ -122,7 +122,7 @@ function placeMines() {
     });
 }
 
-/*function placeMinesOnTable() {
+function placeMinesOnTable() {
     for (var row = 0; row < SIZE; row++) {
         for (var col = 0; col < SIZE; col++) {
             var id = "f"+row+"-"+col;
@@ -134,7 +134,7 @@ function placeMines() {
             } 
         }
     }
-}*/
+}
 
 function openBlank(row, col) {
     if (row < 0 || col < 0 || row >= SIZE || col >= SIZE || matrix[row][col] === -2) {
