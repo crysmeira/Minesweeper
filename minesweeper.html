@@ -1,22 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
     <title>Minesweeper</title>
     <!-- Styles -->
-    <link type="text/css" href="minesweeper.css" rel="stylesheet">
+    <link type="text/css" href="css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="css/minesweeper.css" rel="stylesheet">
     <!-- Scripts -->
     <script src="https://use.fontawesome.com/85104e8c1d.js"></script>
+    <script type="text/javascript" src="js/jquery-3.1.1.js"></script>
 </head>
 <body>
-    <table>
-        <thead>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
-    <input type="button" value="New Game" id="newGame"/>
+    <div class="container">
+        <div class="header">
+            <h1>Minesweeper</h1>
+        </div>
+        <div>
+            <form class="info">
+                <input type="button" value="New Game" id="newGame"/>
+            </form>
+        </div>
+        <div>
+            <p id="game_status"></p>
+        </div>
         
-    <script type="text/javascript" src="minesweeper.js"></script>
+        <div class="game">
+            <table class="map">
+                <thead>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+            
+    <script type="text/javascript" src="js/minesweeper.js"></script>
 </body>
 </html>

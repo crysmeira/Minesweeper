@@ -10,6 +10,8 @@ var mines;
 var opened;
 var active;
 
+var gameStatus = document.getElementById("game_status");
+
 var newGameBt = document.getElementById("newGame");
 newGameBt.addEventListener("click", startGame);
 
@@ -19,7 +21,9 @@ function startGame() {
     active = true;
     opened = SIZE*SIZE;
     mines = [];
-
+    gameStatus.innerHTML = "";
+    console.log(gameStatus.innerHTML);
+    
     initializeTable();
     initializeListener();
     distributeMines();
@@ -64,7 +68,7 @@ function initializeListener() {
             }
             this.style.background = "#ffffff";
             if (mapOfContent[row][col] === -1) { // it is a mine
-                console.log("You lost!");
+                gameStatus.innerHTML = "You lost!";
                 openMines(row, col);
                 active = false;
             } else {
@@ -72,7 +76,7 @@ function initializeListener() {
             }
             
             if (opened === NUM_MINES) {
-                console.log("Congratulations! You won the game...");
+                gameStatus.innerHTML = "Congratulations! You won the game...";
                 active = false;
             }
         });
