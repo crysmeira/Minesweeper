@@ -53,9 +53,7 @@ function initializeListener() {
             this.style.background = "#ffffff";
             var row = Number(this.id[1]);
             var col = Number(this.id[2]);
-            if (matrix[row][col] === 0) {
-                openBlank(row, col);
-            } else if (matrix[row][col] === -1) {
+            if (matrix[row][col] === -1) {
                 console.log("You lost!");
                 var curr = document.getElementById("f"+row+col);
                 curr.style.background = "#ffffff";
@@ -63,9 +61,7 @@ function initializeListener() {
                 openMines();
                 active = false;
             } else {
-                var curr = document.getElementById("f"+row+col).children[0];
-                curr.style.display = "inline";
-                available--;
+                openBlank(row, col);
             }
             
             if (available === NUM_MINES) {
@@ -128,21 +124,19 @@ function placeMinesOnTable() {
 }
 
 function openBlank(row, col) {
-    if (row < 0 || col < 0 || row >= SIZE || col >= SIZE) {
-        return;
-    }
-    if (matrix[row][col] !== 0) {
-        var curr = document.getElementById("f"+row+col);
-        curr.style.background = "#ffffff";
-        curr.children[0].style.display = "inline";
+    if (row < 0 || col < 0 || row >= SIZE || col >= SIZE || matrix[row][col] === -2) {
         return;
     }
     
     var curr = document.getElementById("f"+row+col);
     curr.style.background = "#ffffff";
     curr.children[0].style.display = "inline";
+    available -= 1;
+    if (matrix[row][col] !== 0) {
+        matrix[row][col] = -2;
+        return;
+    }
     matrix[row][col] = -2;
-    available--;
     for (var i = 0; i < 8; i++) {
         var nextRow = row + vr[i];
         var nextCol = col + vc[i];
