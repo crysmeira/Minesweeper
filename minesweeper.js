@@ -4,10 +4,10 @@ var NUM_MINES = SIZE;
 var vr = [-1, -1, -1, 0, 0, 1, 1, 1];
 var vc = [-1, 0, 1, -1, 1, -1, 0, 1];
 var table;
-var matrix;
-var visible;
+var mapOfContent; // -2 = opened, -1 = mine, 0 = nothing, 1-8 = mines near
+var visible; 
 var mines;
-var available;
+var opened;
 var active;
 
 var newGameBt = document.getElementById("newGame");
@@ -17,24 +17,24 @@ startGame();
 
 function startGame() {
     active = true;
-    available = SIZE*SIZE;
+    opened = SIZE*SIZE;
     mines = [];
 
     initializeTable();
     initializeListener();
     distributeMines();
-    placeMines();
-    //placeMinesOnTable();
+    updateMinesNeighbors();
 }
 
+/* Initialize table SIZE * SIZE */
 function initializeTable() {
     table = document.getElementsByTagName("tbody")[0];
-    table.innerHTML = "";
-    matrix = [];
+    table.innerHTML = ""; // clear the table
+    mapOfContent = [];
     visible = [];
     for (var i = 0; i < SIZE; i++) {
         var row = table.insertRow();
-        matrix[i] = [];
+        mapOfContent[i] = [];
         visible[i] = [];
         for (var j = 0; j < SIZE; j++) {
             var td = row.insertCell();
@@ -42,7 +42,7 @@ function initializeTable() {
             td.id = "f"+i+"-"+j;
             td.row = i;
             td.col = j;
-            matrix[i][j] = 0;
+            mapOfContent[i][j] = 0;
             visible[i][j] = 0;
         }
     }
@@ -53,31 +53,25 @@ function initializeListener() {
 
     for (var i = 0; i < tds.length; i++) {
         tds[i].addEventListener("click", function() {
-            if (!active) {
+            if (!active) { // not a valid game
                 return;
             }
             var row = Number(this.row);
             var col = Number(this.col);
-            if (visible[row][col] === 0) {
-                visible[row][col] = 1;
-                var curr = document.getElementById("f"+row+"-"+col).children[0];
-                curr.innerHTML = "<i class='fa fa-flag' aria-hidden='true'></i>";
-                curr.style.display = "inline";
+            if (visible[row][col] === 0) { // if it is the first time clicking it
+                placeFlag(row, col);
                 return;
             }
             this.style.background = "#ffffff";
-            if (matrix[row][col] === -1) {
+            if (mapOfContent[row][col] === -1) { // it is a mine
                 console.log("You lost!");
-                var curr = document.getElementById("f"+row+"-"+col);
-                curr.style.background = "#ffffff";
-                curr.children[0].style.color = "#ff0000";
-                openMines();
+                openMines(row, col);
                 active = false;
             } else {
                 openBlank(row, col);
             }
             
-            if (available === NUM_MINES) {
+            if (opened === NUM_MINES) {
                 console.log("Congratulations! You won the game...");
                 active = false;
             }
@@ -85,59 +79,49 @@ function initializeListener() {
     }
 }
 
+/* Insert a flag in the current position */
+function placeFlag(row, col) {
+    visible[row][col] = 1;
+    var curr = document.getElementById("f"+row+"-"+col).children[0];
+    curr.innerHTML = "<i class='fa fa-flag' aria-hidden='true'></i>";
+    curr.style.display = "inline";
+}
+
+/* Generate the position for the mines */
 function distributeMines() {
     while (mines.length < NUM_MINES) {
         var r = Math.floor(Math.random()*SIZE);
         var c = Math.floor(Math.random()*SIZE);
-        var pos = {
-            row: r,
-            col: c 
-        };
-        var valid = true;
-        for (var j = 0; j < mines.length; j++) {
-            if (mines[j].row === pos.row && mines[j].col === pos.col) {
-                valid = false;
-                break;
-            }
-        }   
-        if (valid) {
+        if (mapOfContent[r][c] === 0) {
+            mapOfContent[r][c] = -1; // mine
+            var pos = {
+                row: r,
+                col: c 
+            };
             mines.push(pos);
         }
     }
 }
 
-function placeMines() {
+function updateMinesNeighbors() {
     mines.forEach(function(m) {
         var row = m.row;
         var col = m.col;
-        matrix[row][col] = -1; // mine
         for (var i = 0; i < 8; i++) {
             var r = row + vr[i];
             var c = col + vc[i];
-            if (r < 0 || c < 0 || r >= SIZE || c >= SIZE || matrix[r][c] === -1) {
+            if (r < 0 || c < 0 || r >= SIZE || c >= SIZE 
+                || mapOfContent[r][c] === -1) {
                 continue;
             }
-            matrix[r][c]++;
+            mapOfContent[r][c]++;
         }
     });
 }
 
-/*function placeMinesOnTable() {
-    for (var row = 0; row < SIZE; row++) {
-        for (var col = 0; col < SIZE; col++) {
-            var id = "f"+row+"-"+col;
-            var field = document.getElementById(id).children[0];
-            if (matrix[row][col] === -1) {
-                field.innerHTML = "<i class='fa fa-bomb' aria-hidden='true'></i>";
-            } else if (matrix[row][col] != 0) {
-                field.innerHTML = matrix[row][col];
-            } 
-        }
-    }
-}*/
-
 function openBlank(row, col) {
-    if (row < 0 || col < 0 || row >= SIZE || col >= SIZE || matrix[row][col] === -2) {
+    if (row < 0 || col < 0 || row >= SIZE || col >= SIZE
+        || mapOfContent[row][col] === -2) {
         return;
     }
     
@@ -145,13 +129,14 @@ function openBlank(row, col) {
     curr.style.background = "#ffffff";
     curr.children[0].style.display = "inline";
     curr.children[0].innerHTML = "";
-    available -= 1;
-    if (matrix[row][col] !== 0) {
-        curr.children[0].innerHTML = matrix[row][col];
-        matrix[row][col] = -2;
+    visible[row][col] = 1;
+    opened -= 1;
+    if (mapOfContent[row][col] !== 0) {
+        curr.children[0].innerHTML = mapOfContent[row][col];
+        mapOfContent[row][col] = -2;
         return;
     }
-    matrix[row][col] = -2;
+    mapOfContent[row][col] = -2;
     for (var i = 0; i < 8; i++) {
         var nextRow = row + vr[i];
         var nextCol = col + vc[i];
@@ -159,11 +144,22 @@ function openBlank(row, col) {
     }
 }
 
-function openMines() {
+/* Show all the mines */
+function openMines(row, col) {
+    changeMine(row, col);
+    
     mines.forEach(function(m) {
         var row = m.row;
         var col = m.col;
-        document.getElementById("f"+row+"-"+col).children[0].innerHTML = "<i class='fa fa-bomb' aria-hidden='true'></i>";
-        document.getElementById("f"+row+"-"+col).children[0].style.display = "inline";
+        var curr = document.getElementById("f"+row+"-"+col).children[0];
+        curr.innerHTML = "<i class='fa fa-bomb' aria-hidden='true'></i>";
+        curr.style.display = "inline";
     });
+}
+
+/* Change the style of the pressed mine */
+function changeMine(row, col) {
+    var curr = document.getElementById("f"+row+"-"+col);
+    curr.style.background = "#ffffff";
+    curr.children[0].style.color = "#ff0000";
 }
