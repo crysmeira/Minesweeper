@@ -2,9 +2,9 @@
 <html>
 <head>
     <title>Minesweeper</title>
-    <!-- Styles -->
+    
     <link type="text/css" href="minesweeper.css" rel="stylesheet">
-    <!-- Scripts -->
+    
     <script src="https://use.fontawesome.com/85104e8c1d.js"></script>
 </head>
 <body>

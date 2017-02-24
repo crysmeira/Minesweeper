@@ -18,7 +18,7 @@ for (var i = 0; i < tds.length; i++) {
         this.style.background = "#ffffff";
         var curr = document.getElementById(this.id).children[0];
         console.log("td: " + curr.innerHTML);
-        if (curr.innerHTML !== "") {
+        if (curr.innerHTML !== " ") {
             console.log("YOU LOST! " + this.id);
             curr.style.display = "inline";
             console.log("YOU LOST! " + curr);
