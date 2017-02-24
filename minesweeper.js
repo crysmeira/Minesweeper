@@ -1,72 +1,159 @@
-/* Initializes the field */
-var table = document.getElementsByTagName("tbody")[0];
+var SIZE = 10;
+var NUM_MINES = SIZE*2;
 
-for (var i = 0; i < 10; i++) {
-    var row = table.insertRow();
-    for (var j = 0; j < 10; j++) {
-        var td = row.insertCell();
-        td.innerHTML = "<span></span>";
-        td.id = "f"+i+j;
+var vr = [-1, -1, -1, 0, 0, 1, 1, 1];
+var vc = [-1, 0, 1, -1, 1, -1, 0, 1];
+var table;
+var matrix;
+var mines;
+var available;
+var active;
+
+var newGameBt = document.getElementById("newGame");
+newGameBt.addEventListener("click", startGame);
+
+startGame();
+
+function startGame() {
+    active = true;
+    available = SIZE*SIZE;
+    mines = [];
+
+    initializeTable();
+    initializeListener();
+    distributeMines();
+    placeMines();
+    placeMinesOnTable();
+}
+
+function initializeTable() {
+    table = document.getElementsByTagName("tbody")[0];
+    table.innerHTML = "";
+    matrix = [];
+    for (var i = 0; i < SIZE; i++) {
+        var row = table.insertRow();
+        matrix[i] = [];
+        for (var j = 0; j < SIZE; j++) {
+            var td = row.insertCell();
+            td.innerHTML = "<span></span>";
+            td.id = "f"+i+j;
+            matrix[i][j] = 0;
+        }
     }
 }
 
-/* Listen for clicks on the field */
-var tds = document.getElementsByTagName("td");
+function initializeListener() {
+    var tds = document.getElementsByTagName("td");
 
-for (var i = 0; i < tds.length; i++) {
-    tds[i].addEventListener("click", function() {
-        this.style.background = "#ffffff";
-        var curr = document.getElementById(this.id).children[0];
-        console.log("td: " + curr.innerHTML);
-        if (curr.innerHTML !== "") {
-            console.log("YOU LOST! " + this.id);
-            curr.style.display = "inline";
-            console.log("YOU LOST! " + curr);
+    for (var i = 0; i < tds.length; i++) {
+        tds[i].addEventListener("click", function() {
+            if (!active) {
+                return;
+            }
+            this.style.background = "#ffffff";
+            var row = Number(this.id[1]);
+            var col = Number(this.id[2]);
+            if (matrix[row][col] === 0) {
+                openBlank(row, col);
+            } else if (matrix[row][col] === -1) {
+                console.log("You lost!");
+                var curr = document.getElementById("f"+row+col);
+                curr.style.background = "#ffffff";
+                curr.children[0].style.color = "#ff0000";
+                openMines();
+                active = false;
+            } else {
+                var curr = document.getElementById("f"+row+col).children[0];
+                curr.style.display = "inline";
+                available--;
+            }
+            
+            if (available === NUM_MINES) {
+                console.log("Congratulations! You won the game...");
+                active = false;
+            }
+        });
+    }
+}
+
+function distributeMines() {
+    while (mines.length < NUM_MINES) {
+        var r = Math.floor(Math.random()*SIZE);
+        var c = Math.floor(Math.random()*SIZE);
+        var pos = {
+            row: r,
+            col: c 
+        };
+        var valid = true;
+        for (var j = 0; j < mines.length; j++) {
+            if (mines[j].row === pos.row && mines[j].col === pos.col) {
+                valid = false;
+                break;
+            }
+        }   
+        if (valid) {
+            mines.push(pos);
+        }
+    }
+}
+
+function placeMines() {
+    mines.forEach(function(m) {
+        var row = m.row;
+        var col = m.col;
+        matrix[row][col] = -1; // mine
+        for (var i = 0; i < 8; i++) {
+            var r = row + vr[i];
+            var c = col + vc[i];
+            if (r < 0 || c < 0 || r >= SIZE || c >= SIZE || matrix[r][c] === -1) {
+                continue;
+            }
+            matrix[r][c]++;
         }
     });
 }
 
-/* Distribute mines */
-var mines = [];
-
-while (mines.length < 20) {
-    var r = Math.floor(Math.random()*10);
-    var c = Math.floor(Math.random()*10);
-    var pos = {
-        row: r,
-        col: c 
-    };
-    var valid = true;
-    for (var j = 0; j < mines.length; j++) {
-        if (mines[j].row === pos.row && mines[j].col === pos.col) {
-            valid = false;
-            break;
+function placeMinesOnTable() {
+    for (var row = 0; row < SIZE; row++) {
+        for (var col = 0; col < SIZE; col++) {
+            var id = "f"+row+col;
+            var field = document.getElementById(id).children[0];
+            if (matrix[row][col] === -1) {
+                field.innerHTML = "<i class='fa fa-bomb' aria-hidden='true'></i>";
+            } else if (matrix[row][col] != 0) {
+                field.innerHTML = matrix[row][col];
+            } 
         }
-    }   
-    if (valid) {
-        mines.push(pos);
     }
 }
 
-vr = [-1, -1, -1, 0, 0, 1, 1, 1];
-vc = [-1, 0, 1, -1, 1, -1, 0, 1];
-
-mines.forEach(function(m) {
-    var row = m.row;
-    var col = m.col;
-    console.log("Mines: " + row + " " + col);
-    var id = "f"+row+col;
-    var field = document.getElementById(id).children[0];
-    field.innerHTML = "b";
-    for (var i = 0; i < 8; i++) {
-        var r = row + vr[i];
-        var c = col + vc[i];
-        if (r < 0 || c < 0 || r >= 10 || c >= 10 || document.getElementById("f"+r+c).children[0].textContent === "b") {
-            continue;
-        }
-        var neighbor = document.getElementById("f"+r+c).children[0];
-        neighbor.innerHTML = (neighbor.innerHTML === " ") ? "1" : Number(neighbor.innerHTML)+1;
+function openBlank(row, col) {
+    if (row < 0 || col < 0 || row >= SIZE || col >= SIZE) {
+        return;
     }
-});
+    if (matrix[row][col] !== 0) {
+        var curr = document.getElementById("f"+row+col);
+        curr.style.background = "#ffffff";
+        curr.children[0].style.display = "inline";
+        return;
+    }
+    
+    var curr = document.getElementById("f"+row+col);
+    curr.style.background = "#ffffff";
+    curr.children[0].style.display = "inline";
+    matrix[row][col] = -2;
+    available--;
+    for (var i = 0; i < 8; i++) {
+        var nextRow = row + vr[i];
+        var nextCol = col + vc[i];
+        openBlank(nextRow, nextCol);
+    }
+}
 
-
+function openMines() {
+    mines.forEach(function(m) {
+        var row = m.row;
+        var col = m.col;
+        document.getElementById("f"+row+col).children[0].style.display = "inline";
+    });
+}
