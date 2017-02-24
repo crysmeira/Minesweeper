@@ -1,5 +1,5 @@
 var SIZE = 10;
-var NUM_MINES = SIZE*2;
+var NUM_MINES = SIZE;
 
 var vr = [-1, -1, -1, 0, 0, 1, 1, 1];
 var vc = [-1, 0, 1, -1, 1, -1, 0, 1];
@@ -36,7 +36,9 @@ function initializeTable() {
         for (var j = 0; j < SIZE; j++) {
             var td = row.insertCell();
             td.innerHTML = "<span></span>";
-            td.id = "f"+i+j;
+            td.id = "f"+i+"-"+j;
+            td.row = i;
+            td.col = j;
             matrix[i][j] = 0;
         }
     }
@@ -51,11 +53,11 @@ function initializeListener() {
                 return;
             }
             this.style.background = "#ffffff";
-            var row = Number(this.id[1]);
-            var col = Number(this.id[2]);
+            var row = Number(this.row);
+            var col = Number(this.col);
             if (matrix[row][col] === -1) {
                 console.log("You lost!");
-                var curr = document.getElementById("f"+row+col);
+                var curr = document.getElementById("f"+row+"-"+col);
                 curr.style.background = "#ffffff";
                 curr.children[0].style.color = "#ff0000";
                 openMines();
@@ -112,7 +114,7 @@ function placeMines() {
 function placeMinesOnTable() {
     for (var row = 0; row < SIZE; row++) {
         for (var col = 0; col < SIZE; col++) {
-            var id = "f"+row+col;
+            var id = "f"+row+"-"+col;
             var field = document.getElementById(id).children[0];
             if (matrix[row][col] === -1) {
                 field.innerHTML = "<i class='fa fa-bomb' aria-hidden='true'></i>";
@@ -128,7 +130,7 @@ function openBlank(row, col) {
         return;
     }
     
-    var curr = document.getElementById("f"+row+col);
+    var curr = document.getElementById("f"+row+"-"+col);
     curr.style.background = "#ffffff";
     curr.children[0].style.display = "inline";
     available -= 1;
@@ -148,6 +150,6 @@ function openMines() {
     mines.forEach(function(m) {
         var row = m.row;
         var col = m.col;
-        document.getElementById("f"+row+col).children[0].style.display = "inline";
+        document.getElementById("f"+row+"-"+col).children[0].style.display = "inline";
     });
 }
