@@ -103,7 +103,7 @@ function initializeListener() {
             
             if (opened === NUM_MINES) {
                 openMines();
-                gameStatus.innerHTML = "You won! =)";
+                gameStatus.innerHTML = "You won!";
                 active = false;
             }
         });

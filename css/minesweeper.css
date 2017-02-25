@@ -1,3 +1,7 @@
+body {
+    background: #f7f7f7;
+}
+
 table {
     background: #bdcbef;
     border: 1px solid #ffffff;
@@ -35,7 +39,8 @@ button, li {
 }
 
 li {
-    padding: 10px;
+    padding: 5px;
+    padding-left: 10px;
     cursor: pointer;
 }
 
@@ -49,7 +54,7 @@ button:hover {
     background: #93adf2;
     margin: 0 auto;
     color: #ffffff;
-    padding: 15px 0;
+    padding: 25px 0;
     font-family: 'Lato', sans-serif;
 }
 
@@ -66,20 +71,19 @@ button:hover {
     width: 60%;
 }
 
-.container {
-    background: #f7f7f7;
-    margin: 30px auto;
-    max-width: 1050px;
-    padding: 0;
+@media (max-width: 350px) {
+    #gameStatus {
+        width: 20%;
+    }
 }
 
-@media (max-width: 480px) {
-    .container {
-        margin: 0 auto;
-    }
+@media (max-width: 480px) and (min-width: 351px) {
     #gameStatus {
         width: 30%;
     }
+}
+
+@media (max-width: 480px) {
     .medium_mode {
         display: none;
     }
@@ -91,6 +95,17 @@ button:hover {
     }
 }
 
+.container {
+    background: #f7f7f7;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0;
+}
+
+.dropdown-menu {
+    min-width: 100px;
+}
+
 .dropdown-menu > li:hover {
     color: #ffffff;
     background-color: #93adf2;
@@ -99,6 +114,10 @@ button:hover {
 .selected {
     background: #93adf2;
     color: #ffffff;
+}
+
+.game {
+    padding: 0 5px;
 }
 
 .cells {
