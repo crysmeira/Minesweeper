@@ -1,5 +1,5 @@
 table {
-    background: pink;
+    background: #bdcbef;
     border: 1px solid #ffffff;
     border-spacing: 2px;
     border-collapse: separate;
@@ -19,25 +19,88 @@ td {
     border: 1px solid #ffffff;
 }
 
-span {
-    display: none;
+button, li {
+    border: none;
+    background: none;
+    text-transform: uppercase;
+    height: 100%;
+    font-weight: 700;
+    color: #93adf2;
+    letter-spacing: 1px;
+    font-size: inherit;
+    transition: all 0.3s;
+    --webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    outline: none;
+}
+
+li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #93adf2;
+    color: #ffffff;
+}
+
+#header {
+    text-align: center;
+    background: #93adf2;
+    margin: 0 auto;
+    color: #ffffff;
+    padding: 15px 0;
+    font-family: 'Lato', sans-serif;
+}
+
+#info {
+    text-align: center;
+    background: #ffffff;
+    height: 30px;
+}
+
+#gameStatus {
+    text-align: center;
+    margin: 0 auto;
+    display: inline-block;
+    width: 60%;
 }
 
 .container {
     background: #f7f7f7;
-    margin: 50px auto;
+    margin: 30px auto;
+    max-width: 1050px;
+    padding: 0;
 }
 
-.header {
-    text-align: center;
+@media (max-width: 480px) {
+    .container {
+        margin: 0 auto;
+    }
+    #gameStatus {
+        width: 30%;
+    }
+    .medium_mode {
+        display: none;
+    }
 }
 
-.info {
-    text-align: center;
-    margin: 0 auto;
+@media (max-width: 767px) {
+    .hard_mode {
+        display: none;
+    }
 }
 
-#game_status {
-    text-align: center;
-    margin: 10px auto;
+.dropdown-menu > li:hover {
+    color: #ffffff;
+    background-color: #93adf2;
+}
+
+.selected {
+    background: #93adf2;
+    color: #ffffff;
+}
+
+.cells {
+    display: none;
 }

@@ -1,5 +1,6 @@
-var SIZE = 10;
-var NUM_MINES = SIZE;
+var ROWS = 10;
+var COLS = 10;
+var NUM_MINES = 10;
 
 var vr = [-1, -1, -1, 0, 0, 1, 1, 1];
 var vc = [-1, 0, 1, -1, 1, -1, 0, 1];
@@ -10,16 +11,41 @@ var mines;
 var opened;
 var active;
 
-var gameStatus = document.getElementById("game_status");
-
 var newGameBt = document.getElementById("newGame");
 newGameBt.addEventListener("click", startGame);
+
+var gameStatus = document.getElementById("gameStatus");
+
+var modeButtons = document.querySelectorAll(".mode");
+for (var i = 0; i < modeButtons.length; i++) {
+    modeButtons[i].addEventListener("click", function() {
+        modeButtons[0].classList.remove("selected");
+        modeButtons[1].classList.remove("selected");
+        modeButtons[2].classList.remove("selected");
+        
+        this.classList.add("selected");
+        if (this.innerHTML === "Medium") {
+            ROWS = 15;
+            COLS = 15;
+            NUM_MINES = 40;
+        } else if (this.innerHTML === "Hard") {
+            ROWS = 15;
+            COLS = 30;
+            NUM_MINES = 80;
+        } else {
+            ROWS = 10;
+            COLS = 10;
+            NUM_MINES = 10;
+        }
+        startGame();
+    });
+}
 
 startGame();
 
 function startGame() {
     active = true;
-    opened = SIZE*SIZE;
+    opened = ROWS*COLS;
     mines = [];
     gameStatus.innerHTML = "";
     
@@ -35,13 +61,13 @@ function initializeTable() {
     table.innerHTML = ""; // clear the table
     mapOfContent = [];
     visible = [];
-    for (var i = 0; i < SIZE; i++) {
+    for (var i = 0; i < ROWS; i++) {
         var row = table.insertRow();
         mapOfContent[i] = [];
         visible[i] = [];
-        for (var j = 0; j < SIZE; j++) {
+        for (var j = 0; j < COLS; j++) {
             var td = row.insertCell();
-            td.innerHTML = "<span></span>";
+            td.innerHTML = "<span class='cells'></span>";
             td.id = "f"+i+"-"+j;
             td.row = i;
             td.col = j;
@@ -77,7 +103,7 @@ function initializeListener() {
             
             if (opened === NUM_MINES) {
                 openMines();
-                gameStatus.innerHTML = "Congratulations! You won the game...";
+                gameStatus.innerHTML = "You won! =)";
                 active = false;
             }
         });
@@ -102,8 +128,8 @@ function changeMine(row, col) {
 /* Generate the position for the mines */
 function distributeMines() {
     while (mines.length < NUM_MINES) {
-        var r = Math.floor(Math.random()*SIZE);
-        var c = Math.floor(Math.random()*SIZE);
+        var r = Math.floor(Math.random()*ROWS);
+        var c = Math.floor(Math.random()*COLS);
         if (mapOfContent[r][c] === 0) {
             mapOfContent[r][c] = -1; // mine
             var pos = {
@@ -122,7 +148,7 @@ function updateMinesNeighbors() {
         for (var i = 0; i < 8; i++) {
             var r = row + vr[i];
             var c = col + vc[i];
-            if (r < 0 || c < 0 || r >= SIZE || c >= SIZE 
+            if (r < 0 || c < 0 || r >= ROWS || c >= COLS 
                 || mapOfContent[r][c] === -1) {
                 continue;
             }
@@ -132,7 +158,7 @@ function updateMinesNeighbors() {
 }
 
 function openBlank(row, col) {
-    if (row < 0 || col < 0 || row >= SIZE || col >= SIZE
+    if (row < 0 || col < 0 || row >= ROWS || col >= COLS
         || mapOfContent[row][col] === -2) {
         return;
     }

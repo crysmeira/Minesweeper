@@ -7,22 +7,26 @@
     <!-- Styles -->
     <link type="text/css" href="css/bootstrap.min.css" rel="stylesheet">
     <link type="text/css" href="css/minesweeper.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:700" rel="stylesheet">
     <!-- Scripts -->
     <script src="https://use.fontawesome.com/85104e8c1d.js"></script>
     <script type="text/javascript" src="js/jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Minesweeper</h1>
-        </div>
-        <div>
-            <form class="info">
-                <input type="button" value="New Game" id="newGame"/>
-            </form>
-        </div>
-        <div>
-            <p id="game_status"></p>
+        <h1 id="header">Minesweeper</h1>
+        <div id="info">
+            <button id="newGame">New Game</button>
+            <span id="gameStatus"></span>
+            <span class="dropdown">
+                <button id="menu1" data-toggle="dropdown">Mode<span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                    <li class="mode easy_mode selected">Easy</li>
+                    <li class="mode medium_mode">Medium</li>
+                    <li class="mode hard_mode">Hard</li>
+                </ul>
+            </span>            
         </div>
         
         <div class="game">
