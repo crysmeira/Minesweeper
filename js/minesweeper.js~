@@ -69,14 +69,13 @@ function initializeListener() {
             if (mapOfContent[row][col] === -1) { // it is a mine
                 gameStatus.innerHTML = "You lost!";
                 changeMine(row, col);
-                openMines();
+                openMines(row, col);
                 active = false;
             } else {
                 openBlank(row, col);
             }
             
             if (opened === NUM_MINES) {
-                openMines();
                 gameStatus.innerHTML = "Congratulations! You won the game...";
                 active = false;
             }
